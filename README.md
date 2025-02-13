@@ -1,13 +1,13 @@
-# 📦 Streamlit App Starter Kit 
+# QuickPick
 ```
-⬆️ (Replace above with your app's name)
+Delicious recipes with just few ingredients.
 ```
 
 Description of the app ...
 
 ## Demo App
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://app-starter-kit.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://QuickPick.streamlit.app/)
 
 ## GitHub Codespaces
 

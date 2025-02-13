@@ -15,7 +15,10 @@ def generate_recipe(ingredients, ration, dietary_preferences, cuisine_type, cook
     
     response = ollama.chat(model='llama3', messages=[{'role': 'user', 'content': prompt}])
     return response['message']['content']
-
+    
+if __name__ == "__main__":
+    main()
+    
 def save_recipe(recipe):
     """Generates a downloadable text file for the recipe."""
     file_name = "generated_recipe.txt"

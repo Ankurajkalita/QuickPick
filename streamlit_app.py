@@ -3,7 +3,10 @@ import ollama
 import json
 from datetime import datetime
 
+# Function to generate a recipe
 def generate_recipe(ingredients, ration, dietary_preferences, cuisine_type, cooking_time, complexity_level, health_goals):
+    """Generates a personalized recipe based on user preferences."""
+    
     prompt = (
         f"Generate a personalized recipe using the following ingredients: {', '.join(ingredients)}. "
         f"Consider a {ration} ration plan with a focus on {cuisine_type} cuisine. "
@@ -12,10 +15,14 @@ def generate_recipe(ingredients, ration, dietary_preferences, cuisine_type, cook
         f"Optimize the recipe for these health goals: {', '.join(health_goals)}. "
         "Provide a step-by-step cooking process, estimated preparation time, and nutritional breakdown."
     )
-    
-    response = ollama.chat(model='llama3', messages=[{'role': 'user', 'content': prompt}])
-    return response['message']['content']
-    
+
+    try:
+        response = ollama.chat(model="llama3", messages=[{"role": "user", "content": prompt}])
+        return response.get("message", {}).get("content", "⚠️ No response from AI. Try again.")
+    except Exception as e:
+        return f"⚠️ Error generating recipe: {str(e)}"
+
+# Function to save recipe as a text file
 def save_recipe(recipe):
     """Generates a downloadable text file for the recipe."""
     file_name = "generated_recipe.txt"
@@ -23,20 +30,9 @@ def save_recipe(recipe):
         file.write(recipe)
     return file_name
 
-
-
-def generate_shopping_list(ingredients, recipe):
-    prompt = (
-        f"Based on the following recipe: {recipe}, and given ingredients: {', '.join(ingredients)}, "
-        "generate a shopping list of additional ingredients required to complete the recipe."
-    )
-    
-    response = ollama.chat(model='llama3', messages=[{'role': 'user', 'content': prompt}])
-    return response['message']['content']
-
 # Streamlit UI
-st.set_page_config(page_title="Welcome to QuickPick Recipes", layout="wide")
-st.title("🍽️ Welcome to QuickPick Recipes")
+st.set_page_config(page_title="QuickPick Recipes", layout="wide")
+st.markdown("🍽️ <h1 style='color: white;'>Welcome to QuickPick Recipes</h1>", unsafe_allow_html=True)
 
 # Sidebar for user input
 st.sidebar.header("User Preferences")
@@ -49,31 +45,32 @@ cooking_time = st.sidebar.slider("Maximum Cooking Time (minutes)", min_value=5, 
 complexity_level = st.sidebar.radio("Select Complexity Level", ["Easy", "Medium", "Hard"])
 health_goals = st.sidebar.multiselect("Select Health Goals", ["Weight Loss", "Muscle Gain", "Heart Health", "Diabetes-Friendly", "Immunity Boost", "Balanced Nutrition"])
 
-# Generate recipe button
+# Fix for Threading Issue: Use session state
+if "recipe_output" not in st.session_state:
+    st.session_state.recipe_output = ""
+
+# Generate Recipe Button
 if st.sidebar.button("Generate Recipe"):
-    if ingredients:
+    if ingredients.strip():
         ingredient_list = [i.strip() for i in ingredients.split(",")]
-        recipe = generate_recipe(ingredient_list, ration, dietary_preferences, cuisine_type, cooking_time, complexity_level, health_goals)
-        
-        st.subheader("📜 Generated Recipe:")
-        st.markdown(recipe)
-        st.caption(f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        st.session_state.recipe_output = generate_recipe(ingredient_list, ration, dietary_preferences, cuisine_type, cooking_time, complexity_level, health_goals)
 
-         # Save Recipe Feature
-        file_name = save_recipe(recipe)
-        with open(file_name, "r") as file:
-            st.download_button(label="📥 Download Recipe", data=file, file_name=file_name, mime="text/plain")
-        
-        st.caption(f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        
+# Display Recipe if generated
+if st.session_state.recipe_output:
+    st.subheader("📜 Generated Recipe:")
+    st.markdown(st.session_state.recipe_output)
 
-    else:
-        st.sidebar.warning("Please enter at least one ingredient.")
+    # Save and Download Recipe
+    file_name = save_recipe(st.session_state.recipe_output)
+    with open(file_name, "r") as file:
+        st.download_button(label="📥 Download Recipe", data=file, file_name=file_name, mime="text/plain")
 
+    st.caption(f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 # Function to add background image
 def add_bg_from_local():
     bg_image = "https://images.unsplash.com/photo-1592457711340-2412dc07b733?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    st.markdown(
         f"""
         <style>
         .stApp {{

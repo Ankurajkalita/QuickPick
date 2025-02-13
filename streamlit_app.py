@@ -24,6 +24,7 @@ def save_recipe(recipe):
     return file_name
 
 
+
 def generate_shopping_list(ingredients, recipe):
     prompt = (
         f"Based on the following recipe: {recipe}, and given ingredients: {', '.join(ingredients)}, "
@@ -68,3 +69,22 @@ if st.sidebar.button("Generate Recipe"):
 
     else:
         st.sidebar.warning("Please enter at least one ingredient.")
+
+
+# Function to add background image
+def add_bg_from_local():
+    bg_image = "https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image: url({bg_image});
+            background-size: cover;
+            background-position: center;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+add_bg_from_local()

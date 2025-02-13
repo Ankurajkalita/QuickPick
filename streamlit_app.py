@@ -73,8 +73,7 @@ if st.sidebar.button("Generate Recipe"):
 
 # Function to add background image
 def add_bg_from_local():
-    bg_image = "https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    st.markdown(
+    bg_image = "https://images.unsplash.com/photo-1592457711340-2412dc07b733?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         f"""
         <style>
         .stApp {{
